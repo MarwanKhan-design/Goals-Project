@@ -35,6 +35,7 @@ module.exports.registerUser = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      token: generateToken(user._id),
     });
   } else {
     res.status(400);
@@ -65,6 +66,7 @@ module.exports.deleteUser = asyncHandler(async (req, res) => {
 
 module.exports.loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+  console.log(email, password);
   const user = await User.findOne({ email });
   if (user && (await bcrypt.compare(password, user.password))) {
     res.json({
@@ -86,6 +88,5 @@ const generateToken = (id) => {
 };
 
 module.exports.getMe = asyncHandler(async (req, res) => {
-  const { _id, name, email } = await User.findById(req.user.id);
-  res.json({ id: _id, name, email });
+  res.json(req.user);
 });

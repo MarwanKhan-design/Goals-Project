@@ -1,25 +1,64 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaUser } from "react-icons/fa";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import Spinner from "../components/Spinner";
+import { register, reset } from "../features/auth/authSlice";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    password2: "",
+    name: "Marwan",
+    email: "marwan@admin.com",
+    password: "password",
+    password2: "password",
   });
 
   const { name, email, password, password2 } = formData;
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    // console.log("useEffect");
+    if (isError) {
+      toast.error(message);
+    }
+    if (isSuccess || user) {
+      navigate("/");
+    }
+    // dispatch(reset());
+  }, [user, isError, isSuccess, message, navigate, dispatch]);
+
   const onChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
-      [e.target.name]: [e.target.value],
+      [e.target.name]: e.target.value,
     }));
   };
   const onSubmit = (e) => {
     e.preventDefault();
+    if (password !== password2) {
+      toast.error("Passwords do not match");
+    } else {
+      const userData = {
+        name,
+        email,
+        password,
+      };
+      console.log("OnSubmit", userData);
+      dispatch(register(userData));
+      dispatch(reset());
+    }
   };
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <>
@@ -76,7 +115,9 @@ const Register = () => {
             />
           </div>
           <div className="form-group">
-            <button className="btn btn-block">Register</button>
+            <button className="btn btn-block" type="submit">
+              Register
+            </button>
           </div>
         </form>
       </section>
