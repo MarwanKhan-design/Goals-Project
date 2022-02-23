@@ -8,10 +8,10 @@ import { register, reset } from "../features/auth/authSlice";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: "Marwan",
-    email: "marwan@admin.com",
-    password: "password",
-    password2: "password",
+    name: "",
+    email: "",
+    password: "",
+    password2: "",
   });
 
   const { name, email, password, password2 } = formData;

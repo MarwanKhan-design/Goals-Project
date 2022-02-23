@@ -1,4 +1,5 @@
 // Import Libraries
+const path = require("path");
 const express = require("express");
 require("dotenv").config();
 require("colors");
@@ -27,6 +28,19 @@ app.use(
 
 app.use("/api/goals", goalRoutes);
 app.use("/api/users", userRoutes);
+
+// Serve Frontend
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/build")));
+  app.get("*", (req, res) =>
+    res.sendFile(
+      path.resolve(__dirname, "../", "frontend", "build", "index.html")
+    )
+  );
+} else {
+  app.get("*", (req, res) => res.send("Please Set To Production"));
+}
 
 app.use(errorHandler);
 
